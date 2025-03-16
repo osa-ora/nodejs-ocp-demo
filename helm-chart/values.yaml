@@ -1,0 +1,23 @@
+replicaCount: 1
+
+image:
+  repository: quay.io/ooransa/nodejs-ocp-demo
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 8080
+
+route:
+  enabled: true
+  host: ""
+  path: "/"
+
+resources:
+  requests:
+    memory: "512Mi"
+    cpu: "250m"
+  limits:
+    memory: "1024Mi"
+    cpu: "500m"
