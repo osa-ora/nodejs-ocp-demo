@@ -1,0 +1,6 @@
+apiVersion: v2
+name: nodejs-ocp-demo
+version: 0.1.2
+description: A Helm chart for deploying NodeJS OCP Demo on OpenShift from Quay.io
+type: application
+appVersion: "1.2"
