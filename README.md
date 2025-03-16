@@ -145,6 +145,63 @@ NPM_MIRROR={the private repository artifact URL}
 <img width="463" alt="Screenshot 2024-07-08 at 5 40 17 PM" src="https://github.com/osa-ora/nodejs-demo/assets/18471537/3ed26c32-12e6-489f-a9b9-30804eec9142">
 
 ---
+### DEPLOYMENT OPTION 5: Deployment using Helm
+
+From OpenShift Web Terminal, write the following command:
+
+```
+oc new-project test2 //or any other project name
+helm install my-nodejs-app https://github.com/osa-ora/nodejs-ocp-demo/raw/refs/heads/master/helm-chart/releases/nodejs-ocp-demo-0.1.2.tgz
+```
+
+<img width="1496" alt="Screenshot 2025-03-16 at 7 42 38 PM" src="https://github.com/user-attachments/assets/c78dda4f-50e3-4637-b3ef-367dc7831638" />
+
+The application components will be deployed successfully in this project.
+
+<img width="870" alt="Screenshot 2025-03-16 at 7 43 18 PM" src="https://github.com/user-attachments/assets/1b0088c8-e098-4179-b553-0e536ce6164f" />
+
+You can edit the applicaton by go to Helm --> Upgrade .. 
+
+<img width="1190" alt="Screenshot 2025-03-16 at 7 43 54 PM" src="https://github.com/user-attachments/assets/298b0164-b4f0-4bbf-bbb9-6691472db445" />
+
+You can edit the values that specified during the release build for example change the replica count into 2, this will create a new revision.
+
+<img width="1195" alt="Screenshot 2025-03-16 at 7 44 26 PM" src="https://github.com/user-attachments/assets/533d7762-ef9b-4d0f-8adc-fa9ecc095832" />
+
+Now if you go the deployment you can see 2 replica count. 
+
+<img width="634" alt="Screenshot 2025-03-16 at 7 45 10 PM" src="https://github.com/user-attachments/assets/f50c0409-847b-4063-b9c3-8b73dc9a4ffa" />
+
+You can rollback to the previous release by selecting any previous revisions that you have created by selecting rollback:
+
+<img width="1160" alt="Screenshot 2025-03-16 at 7 45 42 PM" src="https://github.com/user-attachments/assets/039444ab-dc47-4b3f-ab80-e04a48b688ac" />
+
+Select an old revision e.g. revision 1, you'll notice the replica count is back to 1.
+
+Note: To get the release revision file that we have deployed, you need just to clone the repository, execute "helm package . " while you are inside the "helm-chart" folder, then upload the helm release file into the release folder "nodejs-ocp-demo-0.1.2.tgz", you can version your helm by editing "Chart.yaml" and change the current version "version: 0.1.2" if you have changed different yaml file contents or values.
+
+Note: the helm chart are using Quay.io hosted image in the location: quay.io/ooransa/nodejs-ocp-demo:latest but you can refer to any image registry visible and accessible by OpenShift cluster.
+Note: This image was uploaded from the s2i using the skopeo command. 
+
+```
+skopeo copy --all \
+  --src-creds "$(oc whoami):$(oc whoami -t)" \
+  docker://default-route-openshift-image-registry.apps.cluster-........opentlc.com/test/nodejs-ocp-demo:latest \
+  docker://quay.io/ooransa/nodejs-ocp-demo:latest \
+  --dest-creds "ooransa:my_token"
+```
+Note that in order to expose OpenShift image registery you'll need to patch it:
+
+```
+oc patch configs.imageregistry.operator.openshift.io/cluster --patch '{"spec":{"defaultRoute":true}}' --type=merge
+```
+See: https://docs.redhat.com/en/documentation/openshift_container_platform/4.15/html/registry/securing-exposing-registry#registry-exposing-default-registry-manually_securing-exposing-registry
+
+This covers various options to deploy Nodejs application into OpenShift.
+
+
+
+---
 ---
 ---
 
